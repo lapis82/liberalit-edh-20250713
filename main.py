@@ -51,11 +51,12 @@ for _, row in df.iterrows():
 
 
      popup_html = f"""
-     <div style="width: 300px; max-height: 200px; overflow-y: auto;">
-     <strong>Transcription:</strong><br>{transcription}
-     </div>
-    """
-    folium.Marker(location=(lat, lon), popup=folium.Popup(popup_html, max_width=300)).add_to(marker_cluster)
+<div style="width: 300px; max-height: 200px; overflow-y: auto;">
+<strong>Transcription:</strong><br>{transcription}
+</div>
+"""
+folium.Marker(location=(lat, lon), popup=folium.Popup(popup_html, max_width=300)).add_to(marker_cluster)
+
                                                      
 
 
