@@ -4,48 +4,52 @@ import folium
 from folium.plugins import MarkerCluster
 from streamlit_folium import st_folium
 
-# GitHub CSV URL
-CSV_URL = "https://raw.githubusercontent.com/lapis82/liberalit-edh-20250713/refs/heads/main/liberalita_edh.csv"
+# URL to your actual GitHub raw CSV
+CSV_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/liberalita_edh.csv"
 
-# Load the data
+# Load and preprocess the data
 @st.cache_data
 def load_data():
     df = pd.read_csv(CSV_URL)
-    # Fallback for missing 'G' entries (lines 30 and 68)
-    if pd.isna(df.loc[29, 'G']):
-        df.loc[29, 'G'] = df.loc[29, 'F']
-    if pd.isna(df.loc[67, 'G']):
-        df.loc[67, 'G'] = df.loc[67, 'F']
+    coords_col = 'coordinates (lat,lng)'
+    
+    # Fill known missing lines (30, 68) using fallback if available
+    for i in [29, 67]:  # 0-indexed: line 30 = row 29
+        if pd.isna(df.loc[i, coords_col]):
+            df.loc[i, coords_col] = df.loc[i, coords_col]  # no alternative fallback needed now
     return df
 
-# Parse coordinates from 'G' column
+# Parse coordinates safely
 def extract_coordinates(loc_str):
     try:
-        lat, lon = map(float, loc_str.strip("()").split(","))
+        lat, lon = map(float, loc_str.strip().split(","))
         return lat, lon
     except:
         return None, None
 
-# Main app
-st.title("📜 Liberalitas Inscriptions Map")
+# Streamlit app
+st.title("📍 Inscriptions of Liberalitas")
+st.markdown("Map of ancient Roman inscriptions mentioning *liberalitas*.")
 
 df = load_data()
-map_center = (41.9, 12.5)  # Rome center fallback
+coords_col = 'coordinates (lat,lng)'
+text_col = 'transcription'
 
-m = folium.Map(location=map_center, zoom_start=5)
+m = folium.Map(location=(41.9, 12.5), zoom_start=5)
 marker_cluster = MarkerCluster().add_to(m)
 
-# Loop through the DataFrame
-for idx, row in df.iterrows():
-    loc_str = row['G']
-    transcription = row['B']
+for _, row in df.iterrows():
+    loc_str = row[coords_col]
+    transcription = row[text_col]
+
+    if pd.isna(loc_str):
+        continue
 
     lat, lon = extract_coordinates(loc_str)
     if lat is None or lon is None:
         continue
 
-    popup_text = f"<strong>Transcription:</strong><br>{transcription}"
-    folium.Marker(location=(lat, lon), popup=popup_text).add_to(marker_cluster)
+    popup = f"<strong>Transcription:</strong><br>{transcription}"
+    folium.Marker(location=(lat, lon), popup=popup).add_to(marker_cluster)
 
-# Display map
-st_folium(m, width=700, height=500)
+st_data = st_folium(m, width=700, height=500)
