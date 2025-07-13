@@ -51,7 +51,7 @@ marker_cluster = MarkerCluster().add_to(m)
 for _, row in df.iterrows():
     coords = row['coordinates (lat,lng)']
     transcription = row['transcription']
-      if transcription.startswith("MAI"):
+if transcription.startswith("MAI"):
     transcription = transcription[3:].lstrip(": /-")
     province = row.get('province / Italic region', 'Unknown')
     findspot = row.get('modern find spot', 'Unknown')
