@@ -7,7 +7,7 @@ import html
 import re  # for cleaning metadata from transcriptions
 
 # 🔗 Replace with your actual raw CSV URL from GitHub
-CSV_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/liberalita_edh.csv"
+CSV_URL = "https://raw.githubusercontent.com/lapis82/liberalit-edh-20250713/refs/heads/main/liberalita_edh.csv"
 
 # Load data from GitHub
 @st.cache_data
