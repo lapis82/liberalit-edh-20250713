@@ -49,7 +49,14 @@ for _, row in df.iterrows():
     if lat is None or lon is None:
         continue
 
-    popup = f"<strong>Transcription:</strong><br>{transcription}"
-    folium.Marker(location=(lat, lon), popup=popup).add_to(marker_cluster)
+
+     popup_html = f"""
+     <div style="width: 300px; max-height: 200px; overflow-y: auto;">
+     <strong>Transcription:</strong><br>{transcription}
+     </div>
+    """
+    folium.Marker(location=(lat, lon), popup=folium.Popup(popup_html, max_width=300)).add_to(marker_cluster)
+                                                     
+
 
 st_data = st_folium(m, width=700, height=500)
